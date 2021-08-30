@@ -1,17 +1,15 @@
-resource "aws_vpc" "main" {
-  cidr_block       = var.vpc_cidr
-  instance_tenancy = "default"
 
-  tags = {
-    Name = "main"
-  }
-}
+module "vpc" {
+   source = "terraform-aws-modules/vpc/aws"
+    version = "~>2.0"
+    name                 = "my-vpc"
+    cidr                 = "${lookup(var.cidr_ab, var.environment)}.0.0/16"
+    private_subnets      = local.private_subnets
+    database_subnets     = local.database_subnets
+    public_subnets       = local.public_subnets
 
-resource "aws_subnet" "private" {
-  for_each = var.azs
+    azs                  = local.availability_zones
 
-  vpc_id                  = aws_vpc.vpc.id
-  availability_zone       = format("%s%s", local.region_name, each.key)
-  cidr_block              = cidrsubnet(var.cidr_block, 8, each.value)
-  map_public_ip_on_launch = false
+    # omitted arguments for brevity
+
 }
