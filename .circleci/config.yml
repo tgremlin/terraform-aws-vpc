@@ -18,7 +18,7 @@ jobs:
           command: |
             pwd
             terraform init -input=false
-            terraform plan -out tfapply
+            terraform plan -out tfapply -var-file="input_vars.tfvars"
       - persist_to_workspace:
           root: .
           paths:
