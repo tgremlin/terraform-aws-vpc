@@ -4,7 +4,7 @@ jobs:
   plan-apply:
     working_directory: /tmp/project
     docker:
-      - image: hashicorp/terraform:latest
+      - image: tgremlin82/terraform_ansible_aws:1.0
     steps:
       - checkout
       - run:
@@ -31,7 +31,7 @@ jobs:
   apply:   
     working_directory: /tmp/project  
     docker:
-      - image: hashicorp/terraform:latest
+      - image: tgremlin82/terraform_ansible_aws:1.0
     steps:
       - attach_workspace:
           at: /tmp/project
@@ -47,7 +47,7 @@ jobs:
   plan-destroy: 
     working_directory: /tmp/project
     docker:
-      - image: hashicorp/terraform:latest
+      - image: tgremlin82/terraform_ansible_aws:1.0
     steps:
       - attach_workspace:
           at: /tmp/project
@@ -63,7 +63,7 @@ jobs:
   destroy:
     working_directory: /tmp/project
     docker:
-      - image: hashicorp/terraform:latest
+      - image: tgremlin82/terraform_ansible_aws:1.0
     steps:
       - attach_workspace:
           at: /tmp/project
