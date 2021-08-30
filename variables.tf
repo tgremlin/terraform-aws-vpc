@@ -13,9 +13,9 @@ locals {
     cidr_c_database_subnets = 11
     cidr_c_public_subnets   = 64
 
-    max_private_subnets     = 2
-    max_database_subnets    = 2
-    max_public_subnets      = 2
+    max_private_subnets     = 1
+    max_database_subnets    = 0
+    max_public_subnets      = 1
 }
 
 data "aws_availability_zones" "available" {

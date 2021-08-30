@@ -3,17 +3,17 @@ output "vpc_id" {
 }
 
 output "private_subnets" {
-  value = [module.vpc.private_subnets[*].id]
+  value = module.vpc.private_subnets
 }
 
 output "public_subnets" {
-  value = [module.vpc.public_subnets[*].id]
+  value = module.vpc.public_subnets
 }
 
 output "database_subnets" {
-  value = [module.vpc.database_subnets[*].id]
+  value = module.vpc.database_subnets
 }
 
 output "azs" {
-  value = [module.vpc.azs[*].id]
+  value = module.vpc.azs
 }
