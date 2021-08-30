@@ -1,0 +1,96 @@
+version: 2
+
+jobs:
+  plan-apply:
+    working_directory: /tmp/project
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - checkout
+      - run:
+          name: run AWS configure
+          command: |
+            aws configure --profile staging set region $AWS_DEFAULT_REGION
+            aws configure --profile staging set access_key $AWS_ACCESS_KEY_ID
+            aws configure --profile staging set secret_key $AWS_SECRET_ACCESS_KEY  
+      - run:
+          name: save AWS secrets ssh private key to file
+          command: |
+            aws secretsmanager get-secret-value --secret-id $AWS_SECRET_SSH --query 'SecretString' --output text > /tmp/project/ansible/roles/common/files/deployer.pem             
+      - run:
+          name: terraform init & plan
+          command: |
+            pwd
+            terraform init -input=false
+            terraform plan -out tfapply
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  apply:   
+    working_directory: /tmp/project  
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: /tmp/project
+      - run:
+          name: terraform
+          command: |
+            terraform apply -auto-approve tfapply
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  plan-destroy: 
+    working_directory: /tmp/project
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: /tmp/project
+      - run:
+          name: terraform create destroy plan
+          command: |
+            terraform plan -destroy -out tfdestroy
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  destroy:
+    working_directory: /tmp/project
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: /tmp/project
+      - run:
+          name: terraform destroy
+          command: |
+            terraform apply -auto-approve tfdestroy
+workflows:
+  version: 2
+  plan_approve_apply:
+    jobs:
+      - plan-apply:
+        context: AWS
+      - hold-apply:
+          type: approval
+          requires:
+            - plan-apply
+      - apply:
+          requires:
+            - hold-apply
+      - plan-destroy:
+          requires:
+            - apply
+      - hold-destroy:
+          type: approval
+          requires:
+            - plan-destroy
+      - destroy:
+          requires:
+            - hold-destroy
