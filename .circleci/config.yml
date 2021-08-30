@@ -72,7 +72,9 @@ workflows:
   plan_approve_apply:
     jobs:
       - plan-apply:
-          context: AWS
+          context:
+            - AWS
+            - Slack
       - hold-apply:
           type: approval
           requires:
@@ -80,6 +82,9 @@ workflows:
       - apply:
           requires:
             - hold-apply
+          context:
+            - AWS
+            - Slack
       - plan-destroy:
           requires:
             - apply
@@ -90,3 +95,6 @@ workflows:
       - destroy:
           requires:
             - hold-destroy
+          context:
+            - AWS
+            - Slack
