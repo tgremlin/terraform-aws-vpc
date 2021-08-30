@@ -10,6 +10,5 @@ module "vpc" {
 
     azs                  = local.availability_zones
 
-    # omitted arguments for brevity
 
 }
