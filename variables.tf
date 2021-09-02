@@ -48,3 +48,15 @@ locals {
             if index(local.availability_zones, az) < local.max_public_subnets
         ]
 }
+
+variable "create_database_nat_gateway_route" {
+    description = "Controls if a nat gateway route should be created to give internet access to the database subnets"
+    type = bool
+    default = false
+}
+
+variable "enable_nat_gateway" {
+    description = "Should be true if you want to provision NAT Gateways for each of your private networks"
+    type = bool
+    default = true
+}
