@@ -13,9 +13,9 @@ locals {
     cidr_c_database_subnets = 11
     cidr_c_public_subnets   = 64
 
-    max_private_subnets     = 1
-    max_database_subnets    = 0
-    max_public_subnets      = 1
+    max_private_subnets     = var.max_private_subnets # default 2
+    max_database_subnets    = var.max_database_subnets # default 2
+    max_public_subnets      = var.max_public_subnets # default 2
 }
 
 data "aws_availability_zones" "available" {
@@ -59,4 +59,22 @@ variable "enable_nat_gateway" {
     description = "Should be true if you want to provision NAT Gateways for each of your private networks"
     type = bool
     default = true
+}
+
+variable "max_private_subnets" {
+    description = "Number of private subnets"
+    type = string
+    default = "2"
+}
+
+variable "max_database_subnets" {
+    description = "Number of database subnets"
+    type = string
+    default = "2"
+}
+
+variable "max_public_subnets" {
+    description = "Number of public subnets"
+    type = string
+    default = "2"
 }
